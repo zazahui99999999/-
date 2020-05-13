@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .box {
+            width: 100%;
+            overflow: hidden;
+        }
+
+        ul {
+            width: 800%;
+            display: flex;
+            transition: all 2s;
+            /* 这里没有定位 使用translate改变位置*/
+            /* transform: translate(320px, 0); */
+            /* transform: translateX(); */
+        }
+
+        li {
+            flex: 1;
+        }
+
+        img {
+            width: 100%;
+        }
+    </style>
+</head>
+<script src="(v1.2.0)zepto.js"></script>
+<script src="touch.js"></script>
+
+<body>
+    <div class="box">
+        <ul>
+            <li><a href="#"><img src="images/6-1.jpg" alt=""></a></li>
+            <li><a href="#"><img src="images/1.jpg" alt=""></a></li>
+            <li><a href="#"><img src="images/2.jpg" alt=""></a></li>
+            <li><a href="#"><img src="images/3.jpg" alt=""></a></li>
+            <li><a href="#"><img src="images/4.jpg" alt=""></a></li>
+            <li><a href="#"><img src="images/5.jpg" alt=""></a></li>
+            <li><a href="#"><img src="images/6.jpg" alt=""></a></li>
+            <li><a href="#"><img src="images/1-1.jpg" alt=""></a></li>
+        </ul>
+    </div>
+</body>
+<script>
+    window.onload = function () {
+        var box = $('.box')
+        var li = $('li')
+        var statusPic = function () {
+            // 关闭过渡效果
+            $('ul').css('transition', 'none')
+            $('ul').css('transform', `translateX(-${index * li.width()}px)`)
+            // 开启过渡效果
+            setTimeout(function () {
+                $('ul').css('transition', 'all 2s')
+            }, 3)
+        }
+        // 初始状态
+        var index = 1
+        statusPic()
+
+        // transitionend在帧动画结束时触发(注意不要打错后面是end)
+        // bug因为是在帧动画结束时触发如果你快速往右滑动index来不及判断变为负值
+        $('ul').on('transitionend', function () {
+            if (index == 0) {
+                $('ul').css('transition', 'none')
+                index = 6
+                console.log(index);
+                
+                $('ul').css('transform', `translateX(-${index * li.width()}px)`)   
+                setInterval(function () {
+                    $('ul').css('transition', 'all 2s')
+                }, 1)
+                // 定时器可能存在的bug是代码运行恰好滑动到第6张图不在这10ms内相当于往右滑动没有开启过渡效果会出现生硬的平移
+            }
+            if (index == 7) {
+                $('ul').css('transition', 'none')
+                index = 1
+                $('ul').css('transform', `translateX(-${index * li.width()}px)`)
+                setInterval(function () {
+                    $('ul').css('transition', 'all 2s')
+                }, 1)
+            }
+
+        })
+        box.on('swipeLeft', function () {
+            index++;
+            console.log(index);
+            $('ul').css('transform', `translateX(-${index * li.width()}px)`)     
+        })
+        box.on('swipeRight', function () { 
+            index--;
+            console.log(index); 
+            $('ul').css('transform', `translateX(-${index * li.width()}px)`)
+        })
+    }
+</script>
+
+</html>
